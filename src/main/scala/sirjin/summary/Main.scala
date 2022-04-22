@@ -15,7 +15,7 @@ object Main {
 
   def main(args: Array[String]): Unit = {
     val system =
-      ActorSystem[Nothing](Behaviors.empty, "sirjin-summary-service")
+      ActorSystem[Nothing](Behaviors.empty, "SirjinSummaryService")
     try {
       init(system)
     } catch {

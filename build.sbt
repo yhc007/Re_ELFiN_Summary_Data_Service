@@ -1,19 +1,43 @@
-ThisBuild / organization         := "com.unomic"
-ThisBuild / organizationHomepage := Some(url("https://unomic.com"))
-ThisBuild / scalaVersion         := "2.13.8"
-
 name := "sirjin-summary-service"
 
-val AkkaVersion                = "2.6.19"
-val AkkaHttpVersion            = "10.2.9"
-val AkkaManagementVersion      = "1.1.3"
+organization         := "com.lightbend.akka.samples"
+organizationHomepage := Some(url("https://akka.io"))
+licenses             := Seq(("CC0", url("https://creativecommons.org/publicdomain/zero/1.0")))
+
+scalaVersion := "2.13.5"
+
+Compile / scalacOptions ++= Seq(
+  "-target:11",
+  "-deprecation",
+  "-feature",
+  "-unchecked",
+  "-Xlog-reflective-calls",
+  "-Xlint"
+)
+Compile / javacOptions ++= Seq("-Xlint:unchecked", "-Xlint:deprecation")
+
+Test / parallelExecution := false
+Test / testOptions += Tests.Argument("-oDF")
+Test / logBuffered := false
+
+run / fork          := false
+Global / cancelable := false // ctrl-c
+
+val AkkaVersion                = "2.6.18"
+val AkkaHttpVersion            = "10.2.7"
+val AkkaManagementVersion      = "1.1.2"
 val AkkaPersistenceJdbcVersion = "5.0.4"
-val AlpakkaKafkaVersion        = "3.0.0"
+val AlpakkaKafkaVersion        = "2.0.7"
 val AkkaProjectionVersion      = "1.2.3"
-val ScalikeJdbcVersion         = "4.0.0"
+val ScalikeJdbcVersion         = "3.5.0"
 
 enablePlugins(AkkaGrpcPlugin)
+
 enablePlugins(JavaAppPackaging, DockerPlugin)
+dockerBaseImage             := "docker.io/library/adoptopenjdk:11-jre-hotspot"
+dockerUsername              := sys.props.get("docker.username")
+dockerRepository            := Some("unomic.registry.jetbrains.space/p/elfin-ap/containers")
+ThisBuild / dynverSeparator := "-"
 
 libraryDependencies ++= Seq(
   // 1. Basic dependencies for a clustered application
@@ -32,8 +56,8 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka"             %% "akka-discovery"                    % AkkaVersion,
   // Common dependencies for logging and testing
   "com.typesafe.akka" %% "akka-slf4j"      % AkkaVersion,
-  "ch.qos.logback"     % "logback-classic" % "1.2.11",
-  "org.scalatest"     %% "scalatest"       % "3.2.11" % Test,
+  "ch.qos.logback"     % "logback-classic" % "1.2.9",
+  "org.scalatest"     %% "scalatest"       % "3.1.2" % Test,
   // 2. Using gRPC and/or protobuf
   "com.typesafe.akka" %% "akka-http2-support" % AkkaHttpVersion,
   // 3. Using Akka Persistence
@@ -41,16 +65,15 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka"  %% "akka-serialization-jackson" % AkkaVersion,
   "com.lightbend.akka" %% "akka-persistence-jdbc"      % AkkaPersistenceJdbcVersion,
   "com.typesafe.akka"  %% "akka-persistence-testkit"   % AkkaVersion % Test,
-  "org.postgresql"      % "postgresql"                 % "42.3.3",
+  "org.postgresql"      % "postgresql"                 % "42.2.18",
   // 4. Querying or projecting data from Akka Persistence
   "com.typesafe.akka"  %% "akka-persistence-query"       % AkkaVersion,
   "com.lightbend.akka" %% "akka-projection-eventsourced" % AkkaProjectionVersion,
   "com.lightbend.akka" %% "akka-projection-jdbc"         % AkkaProjectionVersion,
+  "org.scalikejdbc"    %% "scalikejdbc"                  % ScalikeJdbcVersion,
+  "org.scalikejdbc"    %% "scalikejdbc-config"           % ScalikeJdbcVersion,
   "com.typesafe.akka"  %% "akka-stream-kafka"            % AlpakkaKafkaVersion,
   "com.lightbend.akka" %% "akka-projection-testkit"      % AkkaProjectionVersion % Test,
   "io.getquill"        %% "quill-async-postgres"         % "3.12.0",
   "io.getquill"        %% "quill-jdbc-zio"               % "3.16.3",
 )
-
-dockerBaseImage  := "openjdk:11"
-dockerRepository := Some("unomic.registry.jetbrains.space/p/elfin-ap/containers")
