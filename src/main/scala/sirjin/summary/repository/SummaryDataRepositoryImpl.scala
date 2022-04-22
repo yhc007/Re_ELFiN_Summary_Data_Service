@@ -26,7 +26,10 @@ class SummaryDataRepositoryImpl extends SummaryDataRepository {
           (t, e) => t.operationRate -> e.operationRate
         )
     }
-    ctx.run(a)
-    Future.successful(Done)
+    for {
+      _ <- ctx.run(a)
+    } yield {
+      Done
+    }
   }
 }

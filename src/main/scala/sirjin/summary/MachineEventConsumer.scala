@@ -47,7 +47,7 @@ object MachineEventConsumer {
           Consumer
             .committableSource(consumerSettings, Subscriptions.topics(topic))
             .mapAsync(1) { msg =>
-              handleRecord(msg.record, repo).map(_ => msg.committableOffset)
+              handleRecord(msg.record).map(_ => msg.committableOffset)
             }
             .via(Committer.flow(committerSettings))
       }
@@ -55,10 +55,7 @@ object MachineEventConsumer {
     logger.info("started Kafka consumer")
   }
 
-  private def handleRecord(
-      record: ConsumerRecord[String, Array[Byte]],
-      repo: SummaryDataRepositoryImpl
-  ): Future[Done] = {
+  private def handleRecord(record: ConsumerRecord[String, Array[Byte]]): Future[Done] = {
     val bytes   = record.value()
     val x       = ScalaPBAny.parseFrom(bytes)
     val typeUrl = x.typeUrl
