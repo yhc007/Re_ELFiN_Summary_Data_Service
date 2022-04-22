@@ -15,14 +15,21 @@ import org.apache.kafka.common.serialization.StringDeserializer
 import org.slf4j.LoggerFactory
 import sirjin.machine.proto
 import com.google.protobuf.any.{ Any => ScalaPBAny }
+import sirjin.machine.proto.MachineDataUpdated
+
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import scala.util.control.NonFatal
 import scala.concurrent.duration.DurationInt
+import sirjin.summary.repository.SummaryData
+import sirjin.summary.repository.SummaryDataRepositoryImpl
+
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 object MachineEventConsumer {
-  private val logger =
-    LoggerFactory.getLogger(getClass)
+  private val logger = LoggerFactory.getLogger(getClass)
+  val repo           = new SummaryDataRepositoryImpl
 
   def init(system: ActorSystem[_]): Unit = {
     implicit val sys: ActorSystem[_]  = system
@@ -40,7 +47,7 @@ object MachineEventConsumer {
           Consumer
             .committableSource(consumerSettings, Subscriptions.topics(topic))
             .mapAsync(1) { msg =>
-              handleRecord(msg.record).map(_ => msg.committableOffset)
+              handleRecord(msg.record, repo).map(_ => msg.committableOffset)
             }
             .via(Committer.flow(committerSettings))
       }
@@ -48,7 +55,10 @@ object MachineEventConsumer {
     logger.info("started Kafka consumer")
   }
 
-  private def handleRecord(record: ConsumerRecord[String, Array[Byte]]): Future[Done] = {
+  private def handleRecord(
+      record: ConsumerRecord[String, Array[Byte]],
+      repo: SummaryDataRepositoryImpl
+  ): Future[Done] = {
     val bytes   = record.value()
     val x       = ScalaPBAny.parseFrom(bytes)
     val typeUrl = x.typeUrl
@@ -62,43 +72,19 @@ object MachineEventConsumer {
       }
 
       event match {
-        case proto.MachineDataUpdated(
-              ncId,
-              cuttingTime,
-              inCycleTime,
-              waitTime,
-              alarmTime,
-              noConnectionTime,
-              status,
-              alarms,
-              partNumber,
-              opRate,
-              path,
-              partCount,
-              totalPartCount,
-              timestamp,
-              toolNumber,
-              _
-            ) =>
-          logger.info(
-            "Machine Updated By Kafka {},{},{},{},{},{},{},{},{},{},{},{},{},{},{}",
-            ncId,
-            cuttingTime,
-            inCycleTime,
-            waitTime,
-            alarmTime,
-            noConnectionTime,
-            status,
-            alarms,
-            partNumber,
-            opRate,
-            path,
-            partCount,
-            totalPartCount,
-            timestamp,
-            toolNumber
+        case evt: MachineDataUpdated =>
+          repo.update(
+            SummaryData(
+              date = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE),
+              ncId = evt.ncId,
+              cuttingTime = evt.cuttingTime,
+              inCycleTime = evt.inCycleTime,
+              waitTime = evt.waitTime,
+              alarmTime = evt.alarmTime,
+              noConnectionTime = evt.noConnectionTime,
+              operationRate = evt.opRate
+            )
           )
-
       }
 
       Future.successful(Done)

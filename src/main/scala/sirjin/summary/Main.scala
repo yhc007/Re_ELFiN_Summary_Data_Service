@@ -2,7 +2,7 @@ package sirjin.summary
 
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
-//import akka.management.cluster.bootstrap.ClusterBootstrap
+import akka.management.cluster.bootstrap.ClusterBootstrap
 import akka.management.scaladsl.AkkaManagement
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -15,7 +15,7 @@ object Main {
 
   def main(args: Array[String]): Unit = {
     val system =
-      ActorSystem[Nothing](Behaviors.empty, "SirjinSummaruService")
+      ActorSystem[Nothing](Behaviors.empty, "SirjinSummaryService")
     try {
       init(system)
     } catch {
@@ -27,7 +27,7 @@ object Main {
 
   def init(system: ActorSystem[_]): Unit = {
     AkkaManagement(system).start()
-//    ClusterBootstrap(system).start()
+    ClusterBootstrap(system).start()
 
     MachineEventConsumer.init(system)
 

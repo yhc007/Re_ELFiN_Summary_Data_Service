@@ -73,5 +73,7 @@ libraryDependencies ++= Seq(
   "org.scalikejdbc"    %% "scalikejdbc"                  % ScalikeJdbcVersion,
   "org.scalikejdbc"    %% "scalikejdbc-config"           % ScalikeJdbcVersion,
   "com.typesafe.akka"  %% "akka-stream-kafka"            % AlpakkaKafkaVersion,
-  "com.lightbend.akka" %% "akka-projection-testkit"      % AkkaProjectionVersion % Test
+  "com.lightbend.akka" %% "akka-projection-testkit"      % AkkaProjectionVersion % Test,
+  "io.getquill"        %% "quill-async-postgres"         % "3.12.0",
+  "io.getquill"        %% "quill-jdbc-zio"               % "3.16.3",
 )
