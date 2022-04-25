@@ -6,6 +6,7 @@ case class SummaryData(
     shopId: Int = 0,
     date: String,
     ncId: String,
+    partCount : Int,
     cuttingTime: Int,
     inCycleTime: Int,
     waitTime: Int,

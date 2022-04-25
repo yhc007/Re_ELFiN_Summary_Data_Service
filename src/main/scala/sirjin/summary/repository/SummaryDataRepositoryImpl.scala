@@ -18,6 +18,7 @@ class SummaryDataRepositoryImpl extends SummaryDataRepository {
       query[SummaryData]
         .insertValue(lift(params))
         .onConflictUpdate(_.shopId, _.ncId, _.date)(
+          (t, e) => t.partCount -> e.partCount,
           (t, e) => t.cuttingTime -> e.cuttingTime,
           (t, e) => t.inCycleTime -> e.inCycleTime,
           (t, e) => t.waitTime -> e.waitTime,
@@ -26,7 +27,11 @@ class SummaryDataRepositoryImpl extends SummaryDataRepository {
           (t, e) => t.operationRate -> e.operationRate
         )
     }
-    ctx.run(a)
-    Future.successful(Done)
+
+    for (
+      _ <- ctx.run(a)
+    )yield{
+      Done
+    }
   }
 }

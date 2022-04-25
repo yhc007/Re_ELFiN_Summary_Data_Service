@@ -1,43 +1,20 @@
+ThisBuild / organization         := "com.unomic"
+ThisBuild / organizationHomepage := Some(url("https://unomic.com"))
+ThisBuild / scalaVersion         := "2.13.8"
+
 name := "sirjin-summary-service"
+version := "latest"
 
-organization         := "com.lightbend.akka.samples"
-organizationHomepage := Some(url("https://akka.io"))
-licenses             := Seq(("CC0", url("https://creativecommons.org/publicdomain/zero/1.0")))
-
-scalaVersion := "2.13.5"
-
-Compile / scalacOptions ++= Seq(
-  "-target:11",
-  "-deprecation",
-  "-feature",
-  "-unchecked",
-  "-Xlog-reflective-calls",
-  "-Xlint"
-)
-Compile / javacOptions ++= Seq("-Xlint:unchecked", "-Xlint:deprecation")
-
-Test / parallelExecution := false
-Test / testOptions += Tests.Argument("-oDF")
-Test / logBuffered := false
-
-run / fork          := false
-Global / cancelable := false // ctrl-c
-
-val AkkaVersion                = "2.6.18"
-val AkkaHttpVersion            = "10.2.7"
-val AkkaManagementVersion      = "1.1.2"
+val AkkaVersion                = "2.6.19"
+val AkkaHttpVersion            = "10.2.9"
+val AkkaManagementVersion      = "1.1.3"
 val AkkaPersistenceJdbcVersion = "5.0.4"
-val AlpakkaKafkaVersion        = "2.0.7"
+val AlpakkaKafkaVersion        = "3.0.0"
 val AkkaProjectionVersion      = "1.2.3"
 val ScalikeJdbcVersion         = "3.5.0"
 
 enablePlugins(AkkaGrpcPlugin)
-
 enablePlugins(JavaAppPackaging, DockerPlugin)
-dockerBaseImage             := "docker.io/library/adoptopenjdk:11-jre-hotspot"
-dockerUsername              := sys.props.get("docker.username")
-dockerRepository            := Some("unomic.registry.jetbrains.space/p/elfin-ap/containers")
-ThisBuild / dynverSeparator := "-"
 
 libraryDependencies ++= Seq(
   // 1. Basic dependencies for a clustered application
@@ -77,3 +54,6 @@ libraryDependencies ++= Seq(
   "io.getquill"        %% "quill-async-postgres"         % "3.12.0",
   "io.getquill"        %% "quill-jdbc-zio"               % "3.16.3",
 )
+
+dockerBaseImage:= "openjdk:11"
+dockerRepository:= Some("unomic.registry.jetbrains.space/p/elfin-ap/containers")

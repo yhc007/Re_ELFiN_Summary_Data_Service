@@ -47,7 +47,7 @@ object MachineEventConsumer {
           Consumer
             .committableSource(consumerSettings, Subscriptions.topics(topic))
             .mapAsync(1) { msg =>
-              handleRecord(msg.record, repo).map(_ => msg.committableOffset)
+              handleRecord(msg.record).map(_ => msg.committableOffset)
             }
             .via(Committer.flow(committerSettings))
       }
@@ -56,8 +56,7 @@ object MachineEventConsumer {
   }
 
   private def handleRecord(
-      record: ConsumerRecord[String, Array[Byte]],
-      repo: SummaryDataRepositoryImpl
+      record: ConsumerRecord[String, Array[Byte]]
   ): Future[Done] = {
     val bytes   = record.value()
     val x       = ScalaPBAny.parseFrom(bytes)
@@ -77,12 +76,13 @@ object MachineEventConsumer {
             SummaryData(
               date = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE),
               ncId = evt.ncId,
+              partCount = evt.partCount,
               cuttingTime = evt.cuttingTime,
               inCycleTime = evt.inCycleTime,
               waitTime = evt.waitTime,
               alarmTime = evt.alarmTime,
               noConnectionTime = evt.noConnectionTime,
-              operationRate = evt.opRate
+              operationRate = evt.opRate,
             )
           )
       }

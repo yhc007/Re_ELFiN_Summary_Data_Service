@@ -6,13 +6,15 @@
 apiVersion: akka.lightbend.com/v1
 kind: AkkaMicroservice
 metadata:
-  name: machine-data-service
-  namespace: "shopping"
+  name: sirjin-summary-service
+  namespace: "sirjin"
 spec:
   replicas: 1
   imagePullSecrets:
     - "unomic"
-  image: unomic.registry.jetbrains.space/p/elfin-ap/containers/sirjin-data-service:0.0.0-3-d90b656c-20220414-1551
+  image: unomic.registry.jetbrains.space/p/elfin-ap/containers/sirjin-summary-service:latest
+  envSecret:
+    secretName: "sirjin-summary-service-env"
   javaOptions: "-Xlog:gc -XX:InitialRAMPercentage=75 -XX:MaxRAMPercentage=75"
   resources:
     limits:
