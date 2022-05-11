@@ -9,23 +9,21 @@ import akka.kafka.scaladsl.Committer
 import akka.kafka.scaladsl.Consumer
 import akka.stream.RestartSettings
 import akka.stream.scaladsl.RestartSource
+import com.google.protobuf.any.{ Any => ScalaPBAny }
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.serialization.ByteArrayDeserializer
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.slf4j.LoggerFactory
 import sirjin.machine.proto
-import com.google.protobuf.any.{ Any => ScalaPBAny }
 import sirjin.machine.proto.MachineDataUpdated
-
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
-import scala.util.control.NonFatal
-import scala.concurrent.duration.DurationInt
-import sirjin.summary.repository.SummaryData
+import sirjin.summary.repository.SummaryDataDTO.DailyTotalHistory
 import sirjin.summary.repository.SummaryDataRepositoryImpl
 
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
+import scala.concurrent.duration.DurationInt
+import scala.util.control.NonFatal
 
 object MachineEventConsumer {
   private val logger = LoggerFactory.getLogger(getClass)
@@ -73,16 +71,15 @@ object MachineEventConsumer {
       event match {
         case evt: MachineDataUpdated =>
           repo.update(
-            SummaryData(
-              date = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE),
+            DailyTotalHistory(
+              date = LocalDate.now(),
               ncId = evt.ncId,
-              partCount = evt.partCount,
-              cuttingTime = evt.cuttingTime,
+              quantity = evt.partCount,
+              cycleTime = evt.cuttingTime,
               inCycleTime = evt.inCycleTime,
               waitTime = evt.waitTime,
               alarmTime = evt.alarmTime,
-              noConnectionTime = evt.noConnectionTime,
-              operationRate = evt.opRate,
+              noconnTime = evt.noConnectionTime,
             )
           )
       }

@@ -1,16 +1,17 @@
 package sirjin.summary.repository
 
-class SummaryDataDTO {}
+import java.time.LocalDate
 
-case class SummaryData(
-    shopId: Int = 0,
-    date: String,
-    ncId: String,
-    partCount : Int,
-    cuttingTime: Int,
-    inCycleTime: Int,
-    waitTime: Int,
-    alarmTime: Int,
-    noConnectionTime: Int,
-    operationRate: Float
-)
+object SummaryDataDTO {
+  case class DailyTotalHistory(
+      shopId: String = "0",
+      date: LocalDate,
+      ncId: String,
+      quantity: Int,
+      cycleTime: Int,
+      inCycleTime: Int,
+      waitTime: Int,
+      alarmTime: Int,
+      noconnTime: Int
+  )
+}
