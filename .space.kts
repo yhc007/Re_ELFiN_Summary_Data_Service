@@ -1,5 +1,5 @@
 job("Build and push Docker") {
-  container(displayName = "docker stage", image = "unomic.registry.jetbrains.space/p/elfin-ap/containers/sbt:1.6.2") {
+  container(displayName = "docker stage", image = "unomic.registry.jetbrains.space/p/sirjin/containers/sbt:1.6.2") {
     shellScript {
       content = """
                     sbt "Docker / stage"
