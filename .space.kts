@@ -17,7 +17,7 @@ job("Build and push Docker") {
       context = "docker"
     }
 
-    push("unomic.registry.jetbrains.space/p/elfin-ap/containers/sirjin-summary-service") {
+    push("unomic.registry.jetbrains.space/p/sirjin/containers/sirjin-summary-service") {
       tags("latest")
     }
   }
