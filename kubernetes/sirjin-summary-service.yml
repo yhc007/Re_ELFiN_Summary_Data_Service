@@ -21,4 +21,4 @@ spec:
       memory: "2Gi"
     requests:
       memory: "2Gi"
-      cpu: "1"
+      cpu: "0.5"
