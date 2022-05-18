@@ -82,6 +82,9 @@ object MachineEventConsumer {
               noconnTime = evt.noConnectionTime,
             )
           )
+        case _ =>
+          logger.info("record type : {}", event)
+          Future.successful(Done)
       }
 
       Future.successful(Done)
