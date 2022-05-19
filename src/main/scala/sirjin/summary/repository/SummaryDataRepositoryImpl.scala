@@ -19,7 +19,7 @@ class SummaryDataRepositoryImpl extends SummaryDataRepository {
     val a = quote {
       query[DailyTotalHistory]
         .insertValue(lift(params))
-        .onConflictUpdate(_.ncId, _.date)(
+        .onConflictUpdate(_.ncId, _.date, _.shopId)(
           (t, e) => t.quantity -> e.quantity,
           (t, e) => t.cycleTime -> e.cycleTime,
           (t, e) => t.inCycleTime -> e.inCycleTime,
