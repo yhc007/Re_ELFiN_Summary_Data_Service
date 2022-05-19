@@ -72,6 +72,7 @@ object MachineEventConsumer {
         case evt: MachineDataUpdated =>
           repo.update(
             DailyTotalHistory(
+              shopId = evt.shopId,
               date = LocalDate.now(),
               ncId = evt.ncId,
               quantity = evt.partCount,

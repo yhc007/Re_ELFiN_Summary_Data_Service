@@ -21,6 +21,7 @@ message MachineDataUpdated {
   int32 totalPartCount = 13;
   int64 timestamp = 14;
   string toolNumber = 15;
+  string shopId = 16;
 }
 
 message Alarm {
