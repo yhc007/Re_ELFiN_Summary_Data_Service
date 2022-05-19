@@ -81,6 +81,7 @@ object MachineEventConsumer {
               waitTime = evt.waitTime,
               alarmTime = evt.alarmTime,
               noconnTime = evt.noConnectionTime,
+              opRate = evt.opRate
             )
           )
         case _ =>

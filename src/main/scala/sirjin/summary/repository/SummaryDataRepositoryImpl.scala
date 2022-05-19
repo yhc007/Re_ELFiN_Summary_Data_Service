@@ -26,6 +26,7 @@ class SummaryDataRepositoryImpl extends SummaryDataRepository {
           (t, e) => t.waitTime -> e.waitTime,
           (t, e) => t.alarmTime -> e.alarmTime,
           (t, e) => t.noconnTime -> e.noconnTime,
+          (t, e) => t.opRate -> e.opRate,
         )
     }
 

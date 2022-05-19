@@ -12,6 +12,7 @@ object SummaryDataDTO {
       inCycleTime: Int,
       waitTime: Int,
       alarmTime: Int,
-      noconnTime: Int
+      noconnTime: Int,
+      opRate: Float = 0f,
   )
 }
