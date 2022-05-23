@@ -64,8 +64,8 @@ object MachineEventConsumer {
       val event = typeUrl match {
         case "machine-data-service/sirjinmachine.MachineDataUpdated" =>
           proto.MachineDataUpdated.parseFrom(inputBytes)
-        case _ =>
-          throw new IllegalArgumentException(s"unknown record type [$typeUrl]")
+        case _ => typeUrl
+        // throw new IllegalArgumentException(s"unknown record type [$typeUrl]")
       }
 
       event match {
