@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory
 import sirjin.machine.proto
 import sirjin.machine.proto.MachineDataUpdated
 import sirjin.summary.repository.SummaryDataDTO.DailyTotalHistory
-import sirjin.summary.repository.SummaryDataRepositoryImpl
+import sirjin.summary.repository.SummaryDataRepository
 
 import java.time.LocalDate
 import scala.concurrent.ExecutionContext
@@ -25,33 +25,32 @@ import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
 import scala.util.control.NonFatal
 
-object MachineEventConsumer {
+class MachineEventConsumer(
+    system: ActorSystem[_],
+    summaryDataRepo: SummaryDataRepository
+) {
   private val logger = LoggerFactory.getLogger(getClass)
-  val repo           = new SummaryDataRepositoryImpl
 
-  def init(system: ActorSystem[_]): Unit = {
-    implicit val sys: ActorSystem[_]  = system
-    implicit val ec: ExecutionContext = system.executionContext
+  implicit val sys: ActorSystem[_]  = system
+  implicit val ec: ExecutionContext = system.executionContext
 
-    val topic = system.settings.config
-      .getString("machine-data-service.kafka.topic")
-    val consumerSettings =
-      ConsumerSettings(system, new StringDeserializer, new ByteArrayDeserializer).withGroupId("sirjin-summary")
-    val committerSettings = CommitterSettings(system)
+  val topic: String = system.settings.config
+    .getString("machine-data-service.kafka.topic")
+  val consumerSettings: ConsumerSettings[String, Array[Byte]] =
+    ConsumerSettings(system, new StringDeserializer, new ByteArrayDeserializer).withGroupId("sirjin-summary")
+  val committerSettings: CommitterSettings = CommitterSettings(system)
 
-    RestartSource
-      .onFailuresWithBackoff(RestartSettings(minBackoff = 1.second, maxBackoff = 30.seconds, randomFactor = 0.1)) {
-        () =>
-          Consumer
-            .committableSource(consumerSettings, Subscriptions.topics(topic))
-            .mapAsync(1) { msg =>
-              handleRecord(msg.record).map(_ => msg.committableOffset)
-            }
-            .via(Committer.flow(committerSettings))
-      }
-      .run()
-    logger.info("started Kafka consumer")
-  }
+  RestartSource
+    .onFailuresWithBackoff(RestartSettings(minBackoff = 1.second, maxBackoff = 30.seconds, randomFactor = 0.1)) { () =>
+      Consumer
+        .committableSource(consumerSettings, Subscriptions.topics(topic))
+        .mapAsync(1) { msg =>
+          handleRecord(msg.record).map(_ => msg.committableOffset)
+        }
+        .via(Committer.flow(committerSettings))
+    }
+    .run()
+  logger.info("started Kafka consumer")
 
   private def handleRecord(
       record: ConsumerRecord[String, Array[Byte]]
@@ -70,22 +69,24 @@ object MachineEventConsumer {
 
       event match {
         case evt: MachineDataUpdated =>
-          repo.update(
-            DailyTotalHistory(
-              shopId = evt.shopId,
-              date = LocalDate.now(),
-              ncId = evt.ncId,
-              quantity = evt.partCount,
-              cycleTime = evt.cuttingTime,
-              inCycleTime = evt.inCycleTime,
-              waitTime = evt.waitTime,
-              alarmTime = evt.alarmTime,
-              noconnTime = evt.noConnectionTime,
-              opRate = evt.opRate
+          for {
+            _ <- summaryDataRepo.update(
+              DailyTotalHistory(
+                shopId = evt.shopId,
+                date = LocalDate.now(),
+                ncId = evt.ncId,
+                quantity = evt.partCount,
+                cycleTime = evt.cuttingTime,
+                inCycleTime = evt.inCycleTime,
+                waitTime = evt.waitTime,
+                alarmTime = evt.alarmTime,
+                noconnTime = evt.noConnectionTime,
+                opRate = evt.opRate
+              )
             )
-          )
+          } yield ()
+
         case _ =>
-          logger.info("record type : {}", event)
           Future.successful(Done)
       }
 

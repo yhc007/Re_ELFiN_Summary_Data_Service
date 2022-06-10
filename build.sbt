@@ -2,7 +2,7 @@ ThisBuild / organization         := "com.unomic"
 ThisBuild / organizationHomepage := Some(url("https://unomic.com"))
 ThisBuild / scalaVersion         := "2.13.8"
 
-name := "sirjin-summary-service"
+name    := "sirjin-summary-service"
 version := "latest"
 
 val AkkaVersion                = "2.6.19"
@@ -44,16 +44,19 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka"  %% "akka-persistence-testkit"   % AkkaVersion % Test,
   "org.postgresql"      % "postgresql"                 % "42.2.18",
   // 4. Querying or projecting data from Akka Persistence
-  "com.typesafe.akka"  %% "akka-persistence-query"       % AkkaVersion,
-  "com.lightbend.akka" %% "akka-projection-eventsourced" % AkkaProjectionVersion,
-  "com.lightbend.akka" %% "akka-projection-jdbc"         % AkkaProjectionVersion,
-  "org.scalikejdbc"    %% "scalikejdbc"                  % ScalikeJdbcVersion,
-  "org.scalikejdbc"    %% "scalikejdbc-config"           % ScalikeJdbcVersion,
-  "com.typesafe.akka"  %% "akka-stream-kafka"            % AlpakkaKafkaVersion,
-  "com.lightbend.akka" %% "akka-projection-testkit"      % AkkaProjectionVersion % Test,
-  "io.getquill"        %% "quill-async-postgres"         % "3.12.0",
-  "io.getquill"        %% "quill-jdbc-zio"               % "3.16.3",
+  "com.typesafe.akka"        %% "akka-persistence-query"       % AkkaVersion,
+  "com.lightbend.akka"       %% "akka-projection-eventsourced" % AkkaProjectionVersion,
+  "com.lightbend.akka"       %% "akka-projection-jdbc"         % AkkaProjectionVersion,
+  "org.scalikejdbc"          %% "scalikejdbc"                  % ScalikeJdbcVersion,
+  "org.scalikejdbc"          %% "scalikejdbc-config"           % ScalikeJdbcVersion,
+  "com.typesafe.akka"        %% "akka-stream-kafka"            % AlpakkaKafkaVersion,
+  "com.lightbend.akka"       %% "akka-projection-testkit"      % AkkaProjectionVersion % Test,
+  "io.getquill"              %% "quill-async-postgres"         % "3.12.0",
+  "io.getquill"              %% "quill-jdbc-zio"               % "3.16.3",
+  "com.softwaremill.macwire" %% "macros"                       % "2.5.7"               % Provided,
+  "com.softwaremill.macwire" %% "util"                         % "2.5.7",
+  "com.softwaremill.macwire" %% "proxy"                        % "2.5.7",
 )
 
-dockerBaseImage:= "openjdk:11"
-dockerRepository:= Some("unomic.registry.jetbrains.space/p/elfin-ap/containers")
+dockerBaseImage  := "openjdk:11"
+dockerRepository := Some("unomic.registry.jetbrains.space/p/elfin-ap/containers")

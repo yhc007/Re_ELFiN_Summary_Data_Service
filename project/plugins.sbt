@@ -13,7 +13,7 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "1.0.2")
 addSbtPlugin("com.github.sbt" % "sbt-native-packager" % "1.9.7")
 
 //https://github.com/DavidGregory084/sbt-tpolecat
-addSbtPlugin("io.github.davidgregory084" % "sbt-tpolecat" % "0.1.20")
+//addSbtPlugin("io.github.davidgregory084" % "sbt-tpolecat" % "0.1.20")
 
 // https://github.com/dwijnand/sbt-dynver
 addSbtPlugin("com.dwijnand" % "sbt-dynver" % "4.1.1")
