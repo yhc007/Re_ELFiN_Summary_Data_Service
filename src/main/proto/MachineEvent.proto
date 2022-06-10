@@ -22,6 +22,11 @@ message MachineDataUpdated {
   int64 timestamp = 14;
   string toolNumber = 15;
   string shopId = 16;
+  string lastStatus = 17;
+  int64 lastStatusTime = 18;
+  string mainPgmNm = 19;
+  float spdLd = 20;
+  string date = 21;
 }
 
 message Alarm {

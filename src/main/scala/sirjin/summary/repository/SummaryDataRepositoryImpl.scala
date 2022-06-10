@@ -29,9 +29,6 @@ class SummaryDataRepositoryImpl(ctx: PostgresAsyncContext[SnakeCase]) extends Su
         )
     }
 
-    val sql = ctx.translate(a)
-    logger.info(sql)
-
     for {
       _ <- ctx.run(a)
     } yield ()

@@ -73,7 +73,7 @@ class MachineEventConsumer(
             _ <- summaryDataRepo.update(
               DailyTotalHistory(
                 shopId = evt.shopId,
-                date = LocalDate.now(),
+                date = LocalDate.parse(evt.date),
                 ncId = evt.ncId,
                 quantity = evt.partCount,
                 cycleTime = evt.cuttingTime,
