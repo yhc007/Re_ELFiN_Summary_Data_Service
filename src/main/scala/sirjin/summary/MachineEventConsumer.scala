@@ -15,7 +15,7 @@ import org.apache.kafka.common.serialization.ByteArrayDeserializer
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.slf4j.LoggerFactory
 import sirjin.machine.proto
-import sirjin.machine.proto.MachineDataUpdated
+import sirjin.machine.proto.SummaryDataUpdated
 import sirjin.summary.repository.SummaryDataDTO.DailyTotalHistory
 import sirjin.summary.repository.SummaryDataRepository
 
@@ -61,26 +61,26 @@ class MachineEventConsumer(
     try {
       val inputBytes = x.value.newCodedInput()
       val event = typeUrl match {
-        case "machine-data-service/sirjinmachine.MachineDataUpdated" =>
-          proto.MachineDataUpdated.parseFrom(inputBytes)
+        case "machine-data-service/sirjinmachine.SummaryDataUpdated" =>
+          proto.SummaryDataUpdated.parseFrom(inputBytes)
         case _ => typeUrl
         // throw new IllegalArgumentException(s"unknown record type [$typeUrl]")
       }
 
       event match {
-        case evt: MachineDataUpdated =>
+        case evt: SummaryDataUpdated =>
           for {
             _ <- summaryDataRepo.update(
               DailyTotalHistory(
                 shopId = evt.shopId,
                 date = LocalDate.parse(evt.date),
                 ncId = evt.ncId,
-                quantity = evt.partCount,
-                cycleTime = evt.cuttingTime,
+                quantity = evt.quantity,
+                cycleTime = evt.cycleTime,
                 inCycleTime = evt.inCycleTime,
                 waitTime = evt.waitTime,
                 alarmTime = evt.alarmTime,
-                noconnTime = evt.noConnectionTime,
+                noconnTime = evt.noconnTime,
                 opRate = evt.opRate
               )
             )

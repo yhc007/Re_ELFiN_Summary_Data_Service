@@ -59,4 +59,4 @@ libraryDependencies ++= Seq(
 )
 
 dockerBaseImage  := "openjdk:11"
-dockerRepository := Some("unomic.registry.jetbrains.space/p/elfin-ap/containers")
+dockerRepository := Some("unomic.registry.jetbrains.space/p/sirjin/containers")
