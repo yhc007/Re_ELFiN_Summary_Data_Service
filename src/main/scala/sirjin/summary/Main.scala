@@ -26,6 +26,20 @@ object Main {
     try {
       AkkaManagement(system).start()
       ClusterBootstrap(system).start()
+
+      // 서비스가 계속 실행되도록 대기
+      logger.info("Summary Data Service started successfully. Press Ctrl+C to stop.")
+
+      // JVM 종료 시그널 처리
+      sys.addShutdownHook {
+        logger.info("Shutting down Summary Data Service...")
+        system.terminate()
+      }
+
+      // 메인 스레드가 종료되지 않도록 대기
+      import scala.concurrent.Await
+      import scala.concurrent.duration.Duration
+      Await.result(system.whenTerminated, Duration.Inf)
     } catch {
       case NonFatal(e) =>
         logger.error("Terminating due to initialization failure.", e)
